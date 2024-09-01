@@ -6,10 +6,11 @@ from data_encode import base_encode
 #from no_data_encode import no_data_encode
 #from xor_data_encode import xor_data_encode
 #XOR_KEY=int(os.getenv("XOR_KEY")).to_bytes(1, byteorder='big')
-#test only end
 
-TEST_SERVER=os.getenv("TEST_SERVER")
-TEST_PORT=int(os.getenv("TEST_PORT"))
+
+# TEST_SERVER=os.getenv("TEST_SERVER")
+# TEST_PORT=int(os.getenv("TEST_PORT"))
+#test only end
 
 class portmap:
     def __init__(self, listen_port, remote_host, remote_port, encoder):
