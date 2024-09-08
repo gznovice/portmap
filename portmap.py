@@ -3,18 +3,18 @@ import socket
 import os
 from data_encode import base_encode
 #test only, test finished
-#from no_data_encode import no_data_encode
-#from xor_data_encode import xor_data_encode
-#XOR_KEY=int(os.getenv("XOR_KEY")).to_bytes(1, byteorder='big')
+###from no_data_encode import no_data_encode
+###from xor_data_encode import xor_data_encode
+###XOR_KEY=int(os.getenv("XOR_KEY")).to_bytes(1, byteorder='big')
 
 
-#TEST_SERVER=os.getenv("TEST_SERVER")
-#TEST_PORT=int(os.getenv("TEST_PORT"))
+###TEST_SERVER=os.getenv("TEST_SERVER")
+###TEST_PORT=int(os.getenv("TEST_PORT"))
 #test only end
 BYTES_PER_READ = 4096
 RUBBISH_DATA_LEN = 4096
 RUBBISH_DATA = b'A'*RUBBISH_DATA_LEN
-DATA_END_FLAG = b'ZZQ_END'
+DATA_END_FLAG = b'ZZQ_WXJ_K_END'
 
 class portmap:
     def __init__(self, listen_port, remote_host, remote_port, encoder, mode=0):
@@ -44,7 +44,7 @@ class portmap:
                         if not data:
                             break
                         if remote_to_local:
-                            self.remote_reader_byte_received += len(data)  + 8192
+                            self.remote_reader_byte_received += len(data)
                             
                         data = self.encoder.encode(data)
                         _writer.write(data)
@@ -58,7 +58,7 @@ class portmap:
                     
 
             async def rubbish_handle_relay(_reader, _writer):
-                try:
+                try:                    
                     buffer = b''
                     while True:
                         data = await _reader.read(BYTES_PER_READ)
@@ -68,13 +68,16 @@ class portmap:
                         
                         buffer += data
                         if buffer.startswith(RUBBISH_DATA):
-                            buffer = buffer[RUBBISH_DATA_LEN:]                            
+                            buffer = buffer[RUBBISH_DATA_LEN:]   
+                            #print("rubbish found")                         
                             continue
 
                         if DATA_END_FLAG in buffer:
                             #Split the data at "end"
                             useful_data, buffer = buffer.split(DATA_END_FLAG, 1)
                             data = self.encoder.encode(useful_data)
+                        else:
+                            continue
                             
                         _writer.write(data)
                         await _writer.drain()                        
@@ -183,7 +186,7 @@ async def main():
     ###portmap_server2 = portmap(4321, "127.0.0.1", 4320, xor_data_encode(XOR_KEY), 2)
 
     ###async def startSever(server):
-        ###await server.start()    
+    ###    await server.start()    
     
    
 
