@@ -1,0 +1,5 @@
+[
+    {"host":"www.google.com", "weight":6, "port":443},
+    {"host":"www.bing.com", "weight":1, "port":443},
+    {"host":"www.msn.com", "weight":3, "port":443}
+]

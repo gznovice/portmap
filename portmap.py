@@ -2,6 +2,7 @@ import asyncio
 import socket
 import os
 from data_encode import base_encode
+#import base_host_selector don't need
 #test only, test finished
 ###from no_data_encode import no_data_encode
 ###from xor_data_encode import xor_data_encode
@@ -17,23 +18,30 @@ RUBBISH_DATA = b'A'*RUBBISH_DATA_LEN
 DATA_END_FLAG = b'ZZQ_WXJ_K_END'
 
 class portmap:
-    def __init__(self, listen_port, remote_host, remote_port, encoder, mode=0):
+
+    def __init__(self, listen_port, remote_host, remote_port, encoder, mode=0, host_selector = None):
         self.listen_port=listen_port
         self.remote_host=remote_host
         self.remote_port=remote_port
         self.server_socket=None
         self.encoder=encoder
         self.mode=mode    #now we have 0, 1, 2 mode
+        self.host_selector=host_selector
         #the following is for mode 2 
         self.remote_reader_byte_received=0
         self.remote_writer_byte_sent=0
+    
+    def __refresh_host(self):
+        self.remote_host, self.remote_port = self.host_selector.get_host()
 
     #handle connection    
     #1)connect to target address
     #2)relay read write
     #3)should handle encode/decode later
     async def handle_connect(self, reader, writer):
-        try:            
+        try:  
+            self.__refresh_host()
+
             remote_reader, remote_writer = await asyncio.open_connection(self.remote_host, self.remote_port)
             
 
